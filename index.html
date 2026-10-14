@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Part Check Quiz</title>
+<style>
+:root{
+  --deep:#2a1458; --violet:#6d3fd1; --violet2:#8b5cf6; --lilac:#f4f0fc; --mint:#19b98f; --mintsoft:#e2f7f0;
+  --coral:#ef5b5b; --coralsoft:#fdeaea; --sun:#ffc947; --ink:#1f1640; --muted:#6b6489; --line:#e3dcf3; --card:#fff;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Segoe UI",Tahoma,Arial,sans-serif;background:var(--lilac);color:var(--ink);line-height:1.5;min-height:100vh}
+.ar{direction:rtl;font-family:"Segoe UI",Tahoma,Arial,sans-serif}
+button{font-family:inherit;cursor:pointer}
+.wrap{max-width:820px;margin:0 auto;padding:0 16px}
+header{background:linear-gradient(135deg,var(--deep),var(--violet));color:#fff;padding:28px 0 56px;position:relative;overflow:hidden}
+header:after{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;background:rgba(25,185,143,.35)}
+header .tag{display:inline-block;background:var(--mint);color:#fff;font-weight:800;font-size:12px;letter-spacing:1px;padding:4px 12px;border-radius:20px}
+header h1{margin:8px 0 4px;font-size:clamp(28px,6vw,40px)}
+header h1 span{color:var(--sun)}
+header p{margin:0;opacity:.9}
+.card{background:var(--card);border-radius:18px;padding:22px;box-shadow:0 8px 24px rgba(42,20,88,.08);border:1px solid var(--line);margin:16px 0}
+.lift{margin-top:-40px;position:relative;z-index:1}
+h2{margin:0 0 10px}
+label{font-weight:700;display:block;margin-bottom:6px}
+input[type=text]{width:100%;padding:12px 14px;border:2px solid var(--line);border-radius:12px;font-size:16px;font-family:inherit}
+input[type=text]:focus{outline:none;border-color:var(--violet)}
+.btn{border:none;border-radius:12px;padding:12px 22px;font-weight:800;font-size:16px;color:#fff;background:var(--violet);transition:transform .1s}
+.btn:active{transform:scale(.97)}
+.btn.mint{background:var(--mint)}.btn.ghost{background:#fff;color:var(--violet);border:2px solid var(--violet)}.btn.sun{background:var(--sun);color:var(--ink)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:14px 0}
+.rule{background:var(--lilac);border-radius:12px;padding:12px;font-size:14px}
+.rule b{display:block;font-size:22px}
+
+.hud{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin-bottom:12px}
+.pill{background:var(--lilac);border-radius:20px;padding:6px 12px;font-weight:800;font-size:14px}
+.pill.pts{background:var(--sun)}
+.pill.streak{background:var(--mintsoft);color:#0c7a5d}
+.bar{height:10px;background:var(--line);border-radius:10px;overflow:hidden;margin-bottom:16px}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--violet),var(--mint));transition:width .4s}
+.part{display:inline-block;color:#fff;font-weight:800;font-size:12px;letter-spacing:.5px;padding:3px 10px;border-radius:20px;margin-bottom:8px}
+.qtext{font-size:20px;font-weight:700;margin:0 0 14px}
+.opts{display:grid;gap:10px}
+.opt{text-align:left;background:#fff;border:2px solid var(--line);border-radius:14px;padding:13px 16px;font-size:16px;color:var(--ink);display:flex;gap:12px;align-items:center;transition:border-color .15s,background .15s}
+.opt:hover:not(:disabled){border-color:var(--violet2);background:#faf7ff}
+.opt .k{flex:none;width:30px;height:30px;border-radius:50%;background:var(--lilac);display:grid;place-items:center;font-weight:800;color:var(--violet)}
+.opt.right{border-color:var(--mint);background:var(--mintsoft)}.opt.right .k{background:var(--mint);color:#fff}
+.opt.wrong{border-color:var(--coral);background:var(--coralsoft)}.opt.wrong .k{background:var(--coral);color:#fff}
+.opt:disabled{cursor:default}
+.hint{margin-top:12px;background:#fff8e1;border:2px dashed var(--sun);border-radius:12px;padding:10px 14px;display:none}
+.hint.show{display:block}
+.hint .ar{font-size:18px;font-weight:700;margin-top:4px}
+.fb{margin-top:14px;border-radius:12px;padding:12px 16px;display:none;font-size:15px}
+.fb.show{display:block}.fb.ok{background:var(--mintsoft);color:#0c6a51}.fb.no{background:var(--coralsoft);color:#a32a2a}
+.fb b{display:block;font-size:17px;margin-bottom:2px}
+.actions{display:flex;justify-content:space-between;gap:10px;margin-top:16px;flex-wrap:wrap}
+
+.big{font-size:64px;font-weight:900;text-align:center;margin:6px 0;color:var(--violet)}
+.badges{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:14px 0}
+.badge{border-radius:14px;padding:12px;text-align:center;background:var(--lilac);opacity:.45;filter:grayscale(1)}
+.badge.on{opacity:1;filter:none;background:#fff8e1;box-shadow:0 0 0 2px var(--sun)}
+.badge .e{font-size:30px}
+.badge small{display:block;color:var(--muted)}
+.review{margin-top:10px}
+.rv{border-left:5px solid var(--mint);background:#fff;border-radius:10px;padding:10px 14px;margin:8px 0;font-size:14px;border:1px solid var(--line);border-left-width:5px}
+.rv.x{border-left-color:var(--coral)}
+.rv b{display:block}
+.hidden{display:none}
+
+.modal{position:fixed;inset:0;background:rgba(31,22,64,.7);display:none;place-items:center;padding:16px;z-index:50}
+.modal.show{display:grid}
+.cert{background:#fff;max-width:680px;width:100%;border-radius:16px;padding:32px;text-align:center;border:10px double var(--violet)}
+.cert h2{color:var(--violet);font-size:30px;margin:4px 0}
+.cert .who{font-size:28px;font-weight:900;border-bottom:3px solid var(--mint);display:inline-block;padding:0 18px 4px;margin:10px 0}
+canvas#cf{position:fixed;inset:0;pointer-events:none;z-index:60}
+footer{text-align:center;color:var(--muted);font-size:14px;padding:24px 16px 36px}
+@media print{
+  body.pc > *:not(#certModal){display:none!important}
+  body.pc #certModal{display:block!important;position:static;background:none;padding:0}
+  body.pc .noprint{display:none!important}
+}
+</style>
+</head>
+<body>
+<canvas id="cf"></canvas>
+<header>
+  <div class="wrap">
+    <span class="tag">LSC 1503 · PORTFOLIO VIDEO</span>
+    <h1>Part <span>Check</span> Quiz</h1>
+    <p>Do you know what goes in each part of your video? Let's find out!</p>
+  </div>
+</header>
+
+<div class="wrap">
+  <!-- START -->
+  <div class="card lift" id="startCard">
+    <h2>👋 Ready?</h2>
+    <label for="nm">Your full name</label>
+    <input type="text" id="nm" placeholder="e.g. Mariam Al Ketbi">
+    <div class="rules">
+      <div class="rule"><b>15</b>scenario questions about the title slide and Parts 1–5</div>
+      <div class="rule"><b>+10</b>points for each correct answer</div>
+      <div class="rule"><b>💡 −3</b>a hint shows the key word in Arabic</div>
+      <div class="rule"><b>80%</b>to earn your certificate</div>
+    </div>
+    <button class="btn" id="startBtn" disabled>Start the quiz ▶</button>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="card hidden" id="quizCard">
+    <div class="hud">
+      <span class="pill" id="qNum">Question 1 / 15</span>
+      <span class="pill streak" id="streak">🔥 Streak 0</span>
+      <span class="pill pts">⭐ <span id="pts">0</span> pts</span>
+    </div>
+    <div class="bar"><i id="barFill"></i></div>
+    <span class="part" id="partTag">Part 1</span>
+    <p class="qtext" id="qText"></p>
+    <div class="opts" id="opts"></div>
+    <div class="hint" id="hint"></div>
+    <div class="fb" id="fb"></div>
+    <div class="actions">
+      <button class="btn sun" id="hintBtn">💡 Hint (−3)</button>
+      <button class="btn" id="nextBtn" disabled>Next ▶</button>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="card hidden" id="resCard">
+    <h2 id="resTitle">Results</h2>
+    <div class="big" id="resPct">0%</div>
+    <p style="text-align:center;margin:0" id="resLine"></p>
+    <div class="badges" id="badges"></div>
+    <div class="row" style="justify-content:center">
+      <button class="btn mint hidden" id="certBtn">🏆 View certificate</button>
+      <button class="btn ghost" id="jsonBtn">💾 Download results (JSON)</button>
+      <button class="btn" id="againBtn">↺ Try again</button>
+    </div>
+    <h3 style="margin-top:22px">📋 Review your answers</h3>
+    <div class="review" id="review"></div>
+  </div>
+</div>
+
+<footer>Designed by: Nazila Motahari · LSC 1503 Professional Spoken Communication · HCT</footer>
+
+<div class="modal" id="certModal">
+  <div>
+    <div class="cert">
+      <div style="font-size:46px">🏆</div>
+      <div style="letter-spacing:2px;font-weight:700;color:var(--muted)">CERTIFICATE OF ACHIEVEMENT</div>
+      <h2>Part Check Quiz</h2>
+      <p>This certifies that</p>
+      <div class="who" id="cName"></div>
+      <p id="cLine"></p>
+      <p style="color:var(--muted)" id="cDate"></p>
+      <p style="font-size:14px;margin-top:18px">Designed by: Nazila Motahari · LSC 1503 · HCT</p>
+    </div>
+    <div class="row noprint" style="justify-content:center;margin-top:12px">
+      <button class="btn mint" id="certPrint">🖨️ Print certificate</button>
+      <button class="btn ghost" style="background:#fff" id="certClose">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* Each question: part, question, options (first = correct), explanation, hint [English key word, Arabic] */
+const PARTS={T:["Title slide","#2a1458"],1:["Part 1 · Introduction","#ef5b5b"],2:["Part 2 · LPA reflection","#2b7de9"],3:["Part 3 · Study skill","#8b5cf6"],4:["Part 4 · Improvement","#19b98f"],5:["Part 5 · Conclusion","#e8851a"],S:["Structure & signposts","#6d3fd1"]};
+const Q=[
+ {p:"T",q:"Which information does NOT go on your title slide?",o:["Your favourite hobby","Your complete name","Your ID number","The date"],e:"The title slide shows the video title, your name, ID, college/campus and the date.",h:["title slide","شريحة العنوان"]},
+ {p:1,q:"Mariam has said her name and ID number. What should she do next?",o:["Show her ID card to the camera","Explain her study skill in detail","Thank the viewer for watching","Describe her LPA activity"],e:"Showing your ID card proves you are the person in the video (verification).",h:["verification","التحقّق"]},
+ {p:1,q:"Which sentence is the best way to finish the introduction?",o:["In this video, I will talk about my LPA, a study skill and my plan.","Thank you very much for watching my portfolio video today, everyone.","One thing I would like to improve is my speed when I speak.","Let's start with my LPA reflection and what I learned from it."],e:"The introduction ends with a short overview of what the video will cover.",h:["overview","نظرة عامة"]},
+ {p:2,q:"How many LPAs can you talk about in Part 2?",o:["One or two","Exactly three","All of them","None — it's optional"],e:"Choose one or two LPAs and reflect on them carefully.",h:["learning artifact (LPA)","عمل تعلّمي"]},
+ {p:2,q:"Ali describes his LPA activity and explains why he chose it. What is missing?",o:["What he learned from it","His ID number and campus","A summary of every part","His improvement strategy"],e:"For each LPA: describe it, say why you chose it, and say what you learned.",h:["reflection","التأمّل الذاتي"]},
+ {p:2,q:"What should you show on screen in Part 2?",o:["A screenshot of your LPA form or notes","A photo of your classmates in class","Your full script for viewers to read","A short clip from a YouTube video"],e:"A screenshot of your LPA form or notes is your evidence.",h:["screenshot","لقطة شاشة"]},
+ {p:3,q:"Which sentence DESCRIBES the study skill?",o:["Mind mapping means drawing my ideas around one main topic.","I chose mind mapping because I am a very visual learner.","I learned that mind maps help me remember my main ideas.","Now, let's move on to the study skill I found most useful."],e:"Describing the skill = saying what it is. The others give the reason, the learning, or a signpost.",h:["describe","يصف"]},
+ {p:3,q:"Why should you give an example of using your study skill?",o:["It shows how you really used the skill","It makes the video longer than 5 minutes","Teachers want examples instead of reasons","It replaces the reason why you chose it"],e:"A real example makes your reflection clear and personal.",h:["example","مثال"]},
+ {p:4,q:"Noura says: “This is important because my classmates cannot hear me.” Which step is this?",o:["So What?","What?","Now What?","Conclusion"],e:"SO WHAT? explains why the problem matters.",h:["So What? = why is it important?","لماذا هذا مهم؟"]},
+ {p:4,q:"Which sentence is a good NOW WHAT?",o:["I will practise with a timer and record myself every week.","My problem is that I speak too quietly in most classes.","This matters because listeners miss my main ideas.","To sum up, I learned a lot of new skills in this course."],e:"NOW WHAT? is your strategy — the action you will take to improve.",h:["strategy","استراتيجية"]},
+ {p:4,q:"Which WHAT? is the clearest and most specific?",o:["I speak too fast when I'm nervous.","My English is not very good at all.","I have a lot of different problems.","I want to be better at everything."],e:"A good WHAT? names one specific issue you can work on.",h:["specific","محدّد"]},
+ {p:5,q:"What should you NOT do in your conclusion?",o:["Add a new LPA you didn't mention","Summarise your main points briefly","Give a strong closing statement","Thank the viewer for watching"],e:"The conclusion summarises — never add new information at the end.",h:["summarise","يلخّص"]},
+ {p:5,q:"Which phrase is the best way to START your conclusion?",o:["“To sum up, …”","“Let me start by …”","“Next, I want to …”","“I chose it because …”"],e:"“To sum up” tells the viewer you are finishing.",h:["conclusion","الخاتمة"]},
+ {p:"S",q:"Which part comes straight after the LPA reflection?",o:["Study skill reflection","Introduction","Conclusion","Title slide"],e:"Order: title slide → introduction → LPA → study skill → improvement → conclusion.",h:["order","الترتيب"]},
+ {p:"S",q:"Khalid is moving from Part 3 to Part 4. Which signpost fits best?",o:["“Next, one thing I'd like to improve is …”","“Hello, my name is Khalid and my ID is …”","“Let's start with my LPA reflection …”","“Thank you very much for watching …”"],e:"Part 4 is the improvement section, so the signpost introduces what you want to improve.",h:["signposting","عبارات الربط"]}
+];
+const BADGES=[["🎯","First Hit","First correct answer"],["🔥","On Fire","3 correct in a row"],["⚡","Unstoppable","5 correct in a row"],["🧠","No Hints","Finish without hints"],["🏆","Part Pro","Score 80% or more"]];
+
+const $=id=>document.getElementById(id);
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+let st;
+function reset(){st={order:shuffle(Q.map((_,i)=>i)),opts:Q.map(q=>shuffle([0,1,2,3])),i:0,pts:0,streak:0,best:0,correct:0,hints:0,log:[],usedHint:false,answered:false,badges:new Set()};}
+
+$("nm").addEventListener("input",()=>$("startBtn").disabled=$("nm").value.trim().length<2);
+$("startBtn").onclick=()=>{reset();$("startCard").classList.add("hidden");$("resCard").classList.add("hidden");$("quizCard").classList.remove("hidden");show();};
+$("againBtn").onclick=()=>{reset();$("resCard").classList.add("hidden");$("quizCard").classList.remove("hidden");show();window.scrollTo({top:0,behavior:"smooth"});};
+
+function show(){
+  const qi=st.order[st.i],q=Q[qi];st.answered=false;st.usedHint=false;
+  $("qNum").textContent=`Question ${st.i+1} / ${Q.length}`;
+  $("barFill").style.width=(st.i/Q.length*100)+"%";
+  $("partTag").textContent=PARTS[q.p][0];$("partTag").style.background=PARTS[q.p][1];
+  $("qText").textContent=q.q;
+  $("opts").innerHTML=st.opts[qi].map((o,n)=>`<button class="opt" data-o="${o}"><span class="k">${"ABCD"[n]}</span><span>${q.o[o]}</span></button>`).join("");
+  $("hint").className="hint";$("hint").innerHTML="";$("fb").className="fb";
+  $("hintBtn").disabled=false;$("nextBtn").disabled=true;
+  $("nextBtn").textContent=st.i===Q.length-1?"See results 🏁":"Next ▶";
+}
+$("hintBtn").onclick=()=>{if(st.answered||st.usedHint)return;const q=Q[st.order[st.i]];st.usedHint=true;st.hints++;st.pts=Math.max(0,st.pts-3);$("pts").textContent=st.pts;
+  $("hint").innerHTML=`💡 Key word: <b>${q.h[0]}</b><div class="ar">${q.h[1]}</div>`;$("hint").className="hint show";$("hintBtn").disabled=true;};
+$("opts").addEventListener("click",e=>{
+  const b=e.target.closest(".opt");if(!b||st.answered)return;st.answered=true;
+  const qi=st.order[st.i],q=Q[qi],pick=+b.dataset.o,ok=pick===0;
+  document.querySelectorAll(".opt").forEach(x=>{x.disabled=true;if(+x.dataset.o===0)x.classList.add("right");});
+  if(!ok)b.classList.add("wrong");
+  if(ok){st.correct++;st.pts+=10;st.streak++;st.best=Math.max(st.best,st.streak);}else st.streak=0;
+  st.log.push({question:q.q,part:PARTS[q.p][0],yourAnswer:q.o[pick],correctAnswer:q.o[0],correct:ok,hintUsed:st.usedHint});
+  if(ok&&st.correct===1)earn(0);if(st.streak===3)earn(1);if(st.streak===5)earn(2);
+  $("pts").textContent=st.pts;$("streak").textContent="🔥 Streak "+st.streak;
+  const fb=$("fb");fb.className="fb show "+(ok?"ok":"no");
+  fb.innerHTML=`<b>${ok?["✅ Great job!","✅ Correct!","✅ Spot on!","✅ Well done!"][st.i%4]:["❌ Not quite.","❌ Almost!","❌ Good try."][st.i%3]}</b>${ok?"":"Correct answer: <i>"+q.o[0]+"</i><br>"}${q.e}`;
+  $("hintBtn").disabled=true;$("nextBtn").disabled=false;
+});
+$("nextBtn").onclick=()=>{if(st.i<Q.length-1){st.i++;show();}else finish();};
+function earn(i){if(st.badges.has(i))return;st.badges.add(i);toastConfetti(40);}
+
+function finish(){
+  $("barFill").style.width="100%";
+  const pct=Math.round(st.correct/Q.length*100),pass=pct>=80;
+  if(st.hints===0)st.badges.add(3);if(pass)st.badges.add(4);
+  $("quizCard").classList.add("hidden");$("resCard").classList.remove("hidden");
+  $("resTitle").textContent=pass?"🎉 Excellent, "+name()+"!":"💪 Good effort, "+name()+"!";
+  $("resPct").textContent=pct+"%";$("resPct").style.color=pass?"var(--mint)":"var(--coral)";
+  $("resLine").innerHTML=`${st.correct} / ${Q.length} correct · ⭐ ${st.pts} points · best streak ${st.best}<br>${pass?"Certificate unlocked!":"You need 80% for the certificate. Review the Explain slides and try again."}`;
+  $("badges").innerHTML=BADGES.map((b,i)=>`<div class="badge ${st.badges.has(i)?"on":""}"><div class="e">${b[0]}</div><b>${b[1]}</b><small>${b[2]}</small></div>`).join("");
+  $("certBtn").classList.toggle("hidden",!pass);
+  $("review").innerHTML=st.log.map((l,n)=>`<div class="rv ${l.correct?"":"x"}"><b>${n+1}. ${l.question}</b>${l.correct?"✅ ":"❌ Your answer: "+l.yourAnswer+"<br>✅ "}${l.correctAnswer}</div>`).join("");
+  if(pass){toastConfetti(160);setTimeout(showCert,900);}
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+const name=()=>$("nm").value.trim()||"Student";
+function showCert(){$("cName").textContent=name();
+  $("cLine").textContent=`has completed the LSC 1503 Part Check Quiz with a score of ${Math.round(st.correct/Q.length*100)}%.`;
+  $("cDate").textContent=new Date().toLocaleDateString("en-GB");$("certModal").classList.add("show");}
+$("certBtn").onclick=showCert;$("certClose").onclick=()=>$("certModal").classList.remove("show");
+$("certPrint").onclick=()=>{document.body.classList.add("pc");window.print();};
+window.addEventListener("afterprint",()=>document.body.classList.remove("pc"));
+$("jsonBtn").onclick=()=>{const d={quiz:"LSC 1503 Part Check Quiz",student:name(),date:new Date().toISOString(),score:st.correct+"/"+Q.length,percent:Math.round(st.correct/Q.length*100),points:st.pts,hintsUsed:st.hints,badges:[...st.badges].map(i=>BADGES[i][1]),answers:st.log};
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(d,null,2)],{type:"application/json"}));a.download="Part_Check_"+name().replace(/\s+/g,"_")+".json";a.click();URL.revokeObjectURL(a.href);};
+
+function toastConfetti(n){const c=$("cf"),x=c.getContext("2d");c.width=innerWidth;c.height=innerHeight;
+  const cols=["#6d3fd1","#19b98f","#ffc947","#ef5b5b","#2b7de9"];
+  const P=Array.from({length:n},()=>({x:Math.random()*c.width,y:-20-Math.random()*c.height*.4,r:4+Math.random()*6,c:cols[Math.floor(Math.random()*5)],vy:2+Math.random()*3,vx:-1.5+Math.random()*3,a:Math.random()*6}));
+  let f=0;(function t(){x.clearRect(0,0,c.width,c.height);P.forEach(p=>{p.y+=p.vy;p.x+=p.vx;p.a+=.1;x.save();x.translate(p.x,p.y);x.rotate(p.a);x.fillStyle=p.c;x.fillRect(-p.r/2,-p.r/2,p.r,p.r*1.6);x.restore();});if(++f<160)requestAnimationFrame(t);else x.clearRect(0,0,c.width,c.height);})();}
+</script>
+</body>
+</html>
